@@ -8,8 +8,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "expo-gl": "^6.0.0",
+    "expo-gl-cpp": "^6.0.0",
     "react": "16.8.6",
-    "react-native": "0.60.5"
+    "react-native": "0.60.5",
+    "react-native-unimodules": "^0.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
