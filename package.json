@@ -8,9 +8,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.6.1",
+    "@tensorflow/tfjs": "^1.2.9",
+    "@tensorflow/tfjs-react-native": "^0.1.0-alpha.2",
     "expo-gl": "^6.0.0",
     "expo-gl-cpp": "^6.0.0",
-    "react": "16.8.6",
+    "react": "16.9.0",
     "react-native": "0.60.5",
     "react-native-unimodules": "^0.5.4"
   },
