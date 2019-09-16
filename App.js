@@ -26,13 +26,41 @@ import {
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 
+const doLinearPrediction = async () => {
+  const model = tf.sequential();
+
+  model.add(
+    tf.layers.dense({
+      units: 1,
+      inputShape: [1]
+    })
+  );
+
+  model.compile({
+    optimizer: "sgd",
+    loss: "meanSquaredError"
+  });
+
+  const xs = tf.tensor([-1, 0, 1, 2, 3, 4]);
+  const ys = tf.tensor([-3, -1, 1, 3, 5, 7]);
+
+  console.log("starting fit");
+  await model.fit(xs, ys, { epochs: 500 });
+
+  console.log("done");
+  const next = tf.tensor([10]);
+
+  const answer = model.predict(next);
+  tf.print(answer);
+  const numericAnswer = await answer.data();
+  return await Math.round(numericAnswer);
+};
+
 export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isTfReady: false,
-    };
-  }
+  state = {
+    simplePredict: "working",
+    isTfReady: false
+  };
 
   async componentDidMount() {
     // Wait for tf to be ready.
@@ -41,6 +69,9 @@ export default class App extends React.Component {
     this.setState({
       isTfReady: true,
     });
+    doLinearPrediction().then(result =>
+      this.setState({ simplePredict: result })
+    );
   }
 
   render () {
@@ -48,45 +79,12 @@ export default class App extends React.Component {
       <Fragment>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={styles.scrollView}>
-            <Header />
-            {global.HermesInternal == null ? null : (
-              <View style={styles.engine}>
-                <Text style={styles.footer}>Engine: Hermes</Text>
-              </View>
-            )}
-            {this.state.isTfReady && <Text>TFJS: Ready</Text>}
+          <View style={styles.root}>
             <View style={styles.body}>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Step One</Text>
-                <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                  screen and then come back to see your edits.
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>See Your Changes</Text>
-                <Text style={styles.sectionDescription}>
-                  <ReloadInstructions />
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Debug</Text>
-                <Text style={styles.sectionDescription}>
-                  <DebugInstructions />
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Learn More</Text>
-                <Text style={styles.sectionDescription}>
-                  Read the docs to discover what to do next:
-                </Text>
-              </View>
-              <LearnMoreLinks />
+              <Text>TFJS: {this.state.isTfReady ? "Ready" : "Not Ready"}</Text>
+              <Text>{this.state.simplePredict}</Text>
             </View>
-          </ScrollView>
+          </View>
         </SafeAreaView>
       </Fragment>
     );
@@ -94,40 +92,15 @@ export default class App extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
+  root: {
+    height: "100%",
     backgroundColor: Colors.lighter,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
   body: {
+    flex: 1,
     backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+    flexDirection: 'column',
+    justifyContent: "center",
+    alignItems: "center"
   },
 });
