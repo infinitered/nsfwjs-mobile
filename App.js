@@ -68,6 +68,12 @@ export default class App extends React.Component {
     this.setState({predictions});
   }
 
+  renderPrediction = (prediction) => {
+    return (
+      <Text key={prediction.className}>{prediction.className}: {Math.round(prediction.probability * 100)}%</Text>
+    )
+  }
+
   render () {
     const { tfReady, modelReady, predictions } = this.state
     return (
@@ -78,7 +84,8 @@ export default class App extends React.Component {
             <View style={styles.body}>
               <Text>TFJS: {tfReady ? "Ready" : "Loading"}</Text>
               {tfReady && <Text>Model: {modelReady ? "Loaded" : "Loading"}</Text>}
-              {modelReady && <Text>Predictions: {predictions ? JSON.stringify(predictions) : "Predicting"}</Text>}
+              {modelReady && <Text>Predictions: {predictions ? "" : "Predicting"}</Text>}
+              {modelReady && predictions && predictions.map((p) => this.renderPrediction(p))}
             </View>
           </View>
         </SafeAreaView>
