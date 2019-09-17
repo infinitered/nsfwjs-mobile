@@ -10,79 +10,75 @@ import React, {Fragment} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   StatusBar,
+  Image,
 } from 'react-native';
 
 import {
-  Header,
-  LearnMoreLinks,
   Colors,
-  DebugInstructions,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import * as tf from '@tensorflow/tfjs';
-import '@tensorflow/tfjs-react-native';
-
-const doLinearPrediction = async () => {
-  const model = tf.sequential();
-
-  model.add(
-    tf.layers.dense({
-      units: 1,
-      inputShape: [1]
-    })
-  );
-
-  model.compile({
-    optimizer: "sgd",
-    loss: "meanSquaredError"
-  });
-
-  const xs = tf.tensor([-1, 0, 1, 2, 3, 4]);
-  const ys = tf.tensor([-3, -1, 1, 3, 5, 7]);
-
-  console.log("starting fit");
-  await model.fit(xs, ys, { epochs: 500 });
-
-  console.log("done");
-  const next = tf.tensor([10]);
-
-  const answer = model.predict(next);
-  tf.print(answer);
-  const numericAnswer = await answer.data();
-  return await Math.round(numericAnswer);
-};
+import { fetch } from '@tensorflow/tfjs-react-native';
+import * as jpeg from 'jpeg-js';
+import * as nsfwjs from 'nsfwjs';
 
 export default class App extends React.Component {
   state = {
-    simplePredict: "working",
-    isTfReady: false
+    tfReady: false,
+    modelReady: false,
+    predictions: null
   };
 
   async componentDidMount() {
     // Wait for tf to be ready.
     await tf.ready();
     // Signal to the app that tensorflow.js can now be used.
-    this.setState({
-      isTfReady: true,
-    });
-    doLinearPrediction().then(result =>
-      this.setState({ simplePredict: result })
-    );
+    this.setState({tfReady: true});
+    this.model = await nsfwjs.load();
+    this.setState({modelReady: true});
+
+    this.classifyLogo();
+  }
+
+  imageToTensor(rawImageData: ArrayBuffer): tf.Tensor3D {
+    const TO_UINT8ARRAY = true;
+    const { width, height, data } = jpeg.decode(rawImageData, TO_UINT8ARRAY);
+    // Drop the alpha channel info for mobilenet
+    const buffer = new Uint8Array(width * height * 3);
+    let offset = 0; // offset into original data
+    for (let i = 0; i < buffer.length; i += 3) {
+      buffer[i] = data[offset];
+      buffer[i + 1] = data[offset + 1];
+      buffer[i + 2] = data[offset + 2];
+
+      offset += 4;
+    }
+
+    return tf.tensor3d(buffer, [height, width, 3]);
+  }
+
+  classifyLogo = async () => {
+    const imageAssetPath = Image.resolveAssetSource(require("./nsfwjs_logo.jpg"));
+    const response = await fetch(imageAssetPath.uri, {}, { isBinary: true });
+    const rawImageData = await response.arrayBuffer();
+    const imageTensor = this.imageToTensor(rawImageData);
+    const predictions = await this.model.classify(imageTensor);
+    this.setState({predictions});
   }
 
   render () {
+    const { tfReady, modelReady, predictions } = this.state
     return (
       <Fragment>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <View style={styles.root}>
             <View style={styles.body}>
-              <Text>TFJS: {this.state.isTfReady ? "Ready" : "Not Ready"}</Text>
-              <Text>{this.state.simplePredict}</Text>
+              <Text>TFJS: {tfReady ? "Ready" : "Loading"}</Text>
+              {tfReady && <Text>Model: {modelReady ? "Loaded" : "Loading"}</Text>}
+              {modelReady && <Text>Predictions: {predictions ? JSON.stringify(predictions) : "Predicting"}</Text>}
             </View>
           </View>
         </SafeAreaView>

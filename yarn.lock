@@ -3858,6 +3858,11 @@ jetifier@^1.6.2:
   resolved "https://registry.yarnpkg.com/jetifier/-/jetifier-1.6.4.tgz#6159db8e275d97980d26162897a0648b6d4a3222"
   integrity sha512-+f/4OLeqY8RAmXnonI1ffeY1DR8kMNJPhv5WMFehchf7U71cjMQVKkOz1n6asz6kfVoAqKNWJz1A/18i18AcXA==
 
+jpeg-js@^0.3.6:
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.3.6.tgz#c40382aac9506e7d1f2d856eb02f6c7b2a98b37c"
+  integrity sha512-MUj2XlMB8kpe+8DJUGH/3UJm4XpI8XEgZQ+CiHDeyrGoKPdW/8FJv6ku+3UiYm5Fz3CWaL+iXmD8Q4Ap6aC1Jw==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -4071,6 +4076,11 @@ levn@^0.3.0, levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+libgif@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/libgif/-/libgif-0.0.2.tgz#6ba7fe5208de8b78cbd7caa0dd011cdd55ca35b0"
+  integrity sha512-TQ+P1BXm37su8KEWsfn3y5cKf9eOr9k65Ql7AYq9Wt5BjGM0yiC3XHbPfuaqOAikgHKpGZEO6krjkORknwJTbw==
 
 load-json-file@^2.0.0:
   version "2.0.0"
@@ -4812,6 +4822,13 @@ npmlog@^4.0.2:
     console-control-strings "~1.1.0"
     gauge "~2.7.3"
     set-blocking "~2.0.0"
+
+nsfwjs@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/nsfwjs/-/nsfwjs-2.1.0.tgz#20e817fd685625b7728b5b0c852db7b1cad7c522"
+  integrity sha512-mRdPUX0aJJu73IMpQ0G9AnYmKV9IVYYE3cJAX/mhOuLqKpTg000SD9GotDQmyNSGTKSUdp5Gr5CbDVrIovuyWQ==
+  dependencies:
+    libgif "0.0.2"
 
 nullthrows@^1.1.0:
   version "1.1.1"
