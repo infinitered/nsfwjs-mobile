@@ -14,6 +14,7 @@ import {
   Text,
   StatusBar,
   Image,
+  Button
 } from 'react-native';
 
 import {
@@ -23,12 +24,14 @@ import * as tf from '@tensorflow/tfjs';
 import { fetch } from '@tensorflow/tfjs-react-native';
 import * as jpeg from 'jpeg-js';
 import * as nsfwjs from 'nsfwjs';
+import ImagePicker from 'react-native-image-picker';
 
 export default class App extends React.Component {
   state = {
     tfReady: false,
     modelReady: false,
-    predictions: null
+    predictions: null,
+    image: null
   };
 
   async componentDidMount() {
@@ -38,8 +41,6 @@ export default class App extends React.Component {
     this.setState({tfReady: true});
     this.model = await nsfwjs.load();
     this.setState({modelReady: true});
-
-    this.classifyLogo();
   }
 
   imageToTensor(rawImageData: ArrayBuffer): tf.Tensor3D {
@@ -59,13 +60,45 @@ export default class App extends React.Component {
     return tf.tensor3d(buffer, [height, width, 3]);
   }
 
-  classifyLogo = async () => {
-    const imageAssetPath = Image.resolveAssetSource(require("./nsfwjs_logo.jpg"));
+  classifyImage = async () => {
+    const imageAssetPath = Image.resolveAssetSource(this.state.image);
     const response = await fetch(imageAssetPath.uri, {}, { isBinary: true });
     const rawImageData = await response.arrayBuffer();
     const imageTensor = this.imageToTensor(rawImageData);
     const predictions = await this.model.classify(imageTensor);
     this.setState({predictions});
+  }
+
+  selectImage = () => {
+    const options = {
+      title: 'Select Image',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+    
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+    
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    
+        this.setState({
+          image: source,
+          predictions: null
+        });
+        this.classifyImage()
+      }
+    });
   }
 
   renderPrediction = (prediction) => {
@@ -75,7 +108,7 @@ export default class App extends React.Component {
   }
 
   render () {
-    const { tfReady, modelReady, predictions } = this.state
+    const { tfReady, modelReady, predictions, image } = this.state
     return (
       <Fragment>
         <StatusBar barStyle="dark-content" />
@@ -84,7 +117,9 @@ export default class App extends React.Component {
             <View style={styles.body}>
               <Text>TFJS: {tfReady ? "Ready" : "Loading"}</Text>
               {tfReady && <Text>Model: {modelReady ? "Loaded" : "Loading"}</Text>}
-              {modelReady && <Text>Predictions: {predictions ? "" : "Predicting"}</Text>}
+              {modelReady && <Button onPress={this.selectImage} title="Choose Image" />}
+              {image && <Image source={image} style={styles.image} />}
+              {modelReady && image && <Text>Predictions: {predictions ? "" : "Predicting"}</Text>}
               {modelReady && predictions && predictions.map((p) => this.renderPrediction(p))}
             </View>
           </View>
@@ -106,4 +141,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
+  image: {
+    width: 250,
+    height: 250
+  }
 });

@@ -17,6 +17,7 @@
     "nsfwjs": "^2.1.0",
     "react": "16.9.0",
     "react-native": "0.60.5",
+    "react-native-image-picker": "^1.1.0",
     "react-native-unimodules": "^0.5.4"
   },
   "devDependencies": {
