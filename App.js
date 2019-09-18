@@ -16,15 +16,12 @@ import {
   Image,
   Button
 } from 'react-native';
-
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
 import * as tf from '@tensorflow/tfjs';
 import { fetch } from '@tensorflow/tfjs-react-native';
 import * as jpeg from 'jpeg-js';
 import * as nsfwjs from 'nsfwjs';
 import ImagePicker from 'react-native-image-picker';
+import { BlurView } from "@react-native-community/blur";
 
 export default class App extends React.Component {
   state = {
@@ -79,7 +76,7 @@ export default class App extends React.Component {
     };
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
-    
+
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -88,10 +85,6 @@ export default class App extends React.Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = { uri: response.uri };
-    
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
         this.setState({
           image: source,
           predictions: null
@@ -103,23 +96,39 @@ export default class App extends React.Component {
 
   renderPrediction = (prediction) => {
     return (
-      <Text key={prediction.className}>{prediction.className}: {Math.round(prediction.probability * 100)}%</Text>
+      <Text key={prediction.className} style={styles.text}>{prediction.className}: {Math.round(prediction.probability * 100)}%</Text>
     )
   }
 
   render () {
     const { tfReady, modelReady, predictions, image } = this.state
+    let shouldBlur = true;
+    if (predictions) {
+      switch(predictions[0].className) {
+        case 'Porn':
+        case 'Sexy':
+        case 'Hentai':
+          shouldBlur = true;
+          break;
+        default:
+          shouldBlur = false;
+      }
+    }
     return (
       <Fragment>
-        <StatusBar barStyle="dark-content" />
-        <SafeAreaView>
+        <StatusBar barStyle="light-content" />
+        <SafeAreaView backgroundColor="#000000">
           <View style={styles.root}>
             <View style={styles.body}>
-              <Text>TFJS: {tfReady ? "Ready" : "Loading"}</Text>
-              {tfReady && <Text>Model: {modelReady ? "Loaded" : "Loading"}</Text>}
+              <Image source={require("./nsfwjs_logo.jpg")} style={styles.logo} />
+              <Text style={styles.text}>TFJS: {tfReady ? "Ready" : "Loading"}</Text>
+              {tfReady && <Text style={styles.text}>Model: {modelReady ? "Loaded" : "Loading"}</Text>}
               {modelReady && <Button onPress={this.selectImage} title="Choose Image" />}
-              {image && <Image source={image} style={styles.image} />}
-              {modelReady && image && <Text>Predictions: {predictions ? "" : "Predicting"}</Text>}
+              <View style={styles.imageWrapper}>
+                {image && <Image source={image} style={styles.image} />}
+                {image && shouldBlur && <BlurView blurType="dark" blurAmount={30} style={styles.image} />}
+              </View>
+              {modelReady && image && <Text style={styles.text}>Predictions: {predictions ? "" : "Predicting"}</Text>}
               {modelReady && predictions && predictions.map((p) => this.renderPrediction(p))}
             </View>
           </View>
@@ -132,17 +141,34 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   root: {
     height: "100%",
-    backgroundColor: Colors.lighter,
+    backgroundColor: '#000000'
   },
   body: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#000000',
     flexDirection: 'column',
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    color: '#ffffff'
+  },
+  text: {
+    color: '#ffffff'
+  },
+  logo: {
+    width: 300,
+    height: 120
+  },
+  imageWrapper: {
+    width: 250,
+    height: 250
   },
   image: {
     width: 250,
-    height: 250
+    height: 250,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   }
 });
