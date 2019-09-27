@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Fragment} from 'react';
 import {
   SafeAreaView,
@@ -14,7 +6,10 @@ import {
   Text,
   StatusBar,
   Image,
-  Button
+  Button,
+  TouchableOpacity,
+  Linking,
+  ScrollView
 } from 'react-native';
 import * as tf from '@tensorflow/tfjs';
 import { fetch } from '@tensorflow/tfjs-react-native';
@@ -118,20 +113,40 @@ export default class App extends React.Component {
       <Fragment>
         <StatusBar barStyle="light-content" />
         <SafeAreaView backgroundColor="#000000">
-          <View style={styles.root}>
+          <ScrollView style={styles.root} contentContainerStyle={styles.rootContent}>
             <View style={styles.body}>
               <Image source={require("./nsfwjs_logo.jpg")} style={styles.logo} />
               <Text style={styles.text}>TFJS: {tfReady ? "Ready" : "Loading"}</Text>
               {tfReady && <Text style={styles.text}>Model: {modelReady ? "Loaded" : "Loading"}</Text>}
-              {modelReady && <Button onPress={this.selectImage} title="Choose Image" />}
-              <View style={styles.imageWrapper}>
+              <TouchableOpacity style={styles.imageWrapper} onPress={modelReady ? this.selectImage : undefined}>
                 {image && <Image source={image} style={styles.image} />}
-                {image && shouldBlur && <BlurView blurType="dark" blurAmount={30} style={styles.image} />}
+                {image && shouldBlur && <BlurView blurType="dark" blurAmount={30} style={styles.blur} />}
+                {modelReady && !image && <Text style={styles.transparentText}>Tap to choose image</Text>}
+              </TouchableOpacity>
+              <View style={styles.predictionWrapper}>
+                {modelReady && image && <Text style={styles.text}>Predictions: {predictions ? "" : "Predicting"}</Text>}
+                {modelReady && predictions && predictions.map((p) => this.renderPrediction(p))}
               </View>
-              {modelReady && image && <Text style={styles.text}>Predictions: {predictions ? "" : "Predicting"}</Text>}
-              {modelReady && predictions && predictions.map((p) => this.renderPrediction(p))}
+              <View style={styles.footer}>
+                <View style={styles.logoWrapper}>
+                  <TouchableOpacity onPress={() => Linking.open("https://js.tensorflow.org/")} style={styles.logoLink}>
+                    <Text style={styles.poweredBy}>Powered by:</Text>
+                    <Image source={require("./tfjs.jpg")} style={styles.tfLogo} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => Linking.open("https://infinite.red")} style={styles.logoLink}>
+                    <Text style={styles.presentedBy}>Presented by:</Text>
+                    <Image source={require("./ir-logo.png")} style={styles.irLogo} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.resources}>Resources:</Text>
+                <View style={styles.links}>
+                  <Text onPress={() => Linking.open("https://github.com/infinitered/nsfwjs-mobile/")} style={styles.text}>GitHub</Text>
+                  <Text onPress={() => Linking.open("https://github.com/infinitered/nsfwjs")} style={styles.text}>NSFWJS GitHub</Text>
+                  <Text onPress={() => Linking.open("https://shift.infinite.red/avoid-nightmares-nsfw-js-ab7b176978b1")} style={styles.text}>Blog Post</Text>
+                </View>
+              </View>
             </View>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </Fragment>
     );
@@ -140,14 +155,19 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   root: {
+    width: "100%",
+    height: "100%"
+  },
+  rootContent: {
+    width: "100%",
     height: "100%",
-    backgroundColor: '#000000'
+    backgroundColor: '#000000',
+    marginBottom: 50
   },
   body: {
     flex: 1,
     backgroundColor: '#000000',
     flexDirection: 'column',
-    justifyContent: "center",
     alignItems: "center",
     color: '#ffffff'
   },
@@ -159,16 +179,86 @@ const styles = StyleSheet.create({
     height: 120
   },
   imageWrapper: {
-    width: 250,
-    height: 250
+    width: 280,
+    height: 280,
+    padding: 10,
+    borderColor: '#02bbd7',
+    borderWidth: 5,
+    borderStyle: "dashed",
+    marginTop: 10,
+    marginBottom: 10,
+    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center"
   },
   image: {
     width: 250,
     height: 250,
     position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+    top: 10,
+    left: 10,
+    bottom: 10,
+    right: 10,
+  },
+  blur: {
+    width: 250,
+    height: 250,
+    position: 'absolute',
+    top: 10,
+    left: 10, 
+    bottom: 10,
+    right: 10
+  },
+  transparentText: {
+    color: "#ffffff",
+    opacity: 0.7
+  },
+  predictionWrapper: {
+    height: 100,
+    width: "100%",
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  footer: {
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  logoWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
+  logoLink: {
+    flexDirection: "column",
+    alignItems: "center",
+    flex: 1
+  },
+  poweredBy: {
+    fontSize: 20,
+    color: "#e69e34",
+    marginBottom: 6
+  },
+  tfLogo: {
+    width: 125,
+    height: 70,
+  },
+  presentedBy: {
+    fontSize: 20,
+    color: "#e72f36",
+    marginBottom: 8
+  },
+  irLogo: {
+    width: 150,
+    height: 64
+  },
+  resources: {
+    marginTop: 10,
+    color: "#ffffff"
+  },
+  links: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 10,
+    marginBottom: 25
   }
 });
