@@ -17,6 +17,7 @@ import * as jpeg from 'jpeg-js';
 import * as nsfwjs from 'nsfwjs';
 import ImagePicker from 'react-native-image-picker';
 import { BlurView } from "@react-native-community/blur";
+import { bundleResourceIO } from "@tensorflow/tfjs-react-native";
 
 export default class App extends React.Component {
   state = {
@@ -31,7 +32,7 @@ export default class App extends React.Component {
     await tf.ready();
     // Signal to the app that tensorflow.js can now be used.
     this.setState({tfReady: true});
-    this.model = await nsfwjs.load();
+    this.model = await nsfwjs.load(bundleResourceIO(require("./nsfw-model.json"), require("./nsfw-weights.bin")));
     this.setState({modelReady: true});
   }
 
