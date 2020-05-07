@@ -14,6 +14,13 @@ An example React Native implementation of [Infinite Red's](https://infinite.red)
 1. Compile and run app<br />
 `react-native run-ios` or `react-native run-android`
 
+## Additional Learning
+
+- [AI Demystified: 5-day Mini-Course (FREE)](https://academy.infinite.red/p/ai-demystified-free-5-day-mini-course)
+- [Beginning Machine Learning with TensorFlow.js](https://academy.infinite.red/p/beginning-machine-learning-with-tensorflow-js)
+- [Installing React Native on macOS (FREE)](https://academy.infinite.red/p/installing-react-native-tutorial-on-macos)
+- [Installing React Native on Windows 10 (FREE)](https://academy.infinite.red/p/installing-react-native-tutorial-on-windows-10)
+
 ## :heart: Special Thanks :heart:
 
 Thank you to the numerous contributors of [NSFWJS](https://github.com/infinitered/nsfwjs/graphs/contributors) and [TensorFlowJS](https://github.com/tensorflow/tfjs/graphs/contributors). Our awe and appreciation for the friendliness of Open Source is the fuel for all [Infinite Red](https://infinite.red/) projects like NSFWJS Mobile.
