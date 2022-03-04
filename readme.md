@@ -25,6 +25,9 @@ An example React Native implementation of [Infinite Red's](https://infinite.red)
 
 Thank you to the numerous contributors of [NSFWJS](https://github.com/infinitered/nsfwjs/graphs/contributors) and [TensorFlowJS](https://github.com/tensorflow/tfjs/graphs/contributors). Our awe and appreciation for the friendliness of Open Source is the fuel for all [Infinite Red](https://infinite.red/) projects like NSFWJS Mobile.
 
-## Premium Support
+## Need the experts? Hire Infinite Red for your next project
 
-[NSFWJS](https://github.com/infinitered/nsfwjs), as an open source project, is free to use and always will be. To help support providing NSFWJS and other tools, [Infinite Red](https://infinite.red/) offers premium [React Native](https://infinite.red/react-native) app design/development services. Get in touch [here](https://infinite.red/contact) or email us at [hello@infinite.red](mailto:hello@infinite.red).
+If your project's calling for the experts in all things React Native, Infinite Red’s here to help! Our experienced team of software engineers have worked with companies like Microsoft, Zoom, and Mercari to bring even some of the most complex projects to life.
+
+Whether it’s running a full project or training a team on React Native, we can help you solve your company’s toughest engineering challenges – and make it a great experience at the same time.
+Ready to see how we can work together? [Send us a message](mailto:hello@infinite.red)
